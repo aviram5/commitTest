@@ -1,4 +1,3 @@
-import 'react-native-gesture-handler';
 import React from 'react';
 import * as eva from '@eva-design/eva';
 import AppNavigator from './src/navigation/AppNavigator';
