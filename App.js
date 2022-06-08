@@ -1,12 +1,19 @@
 import React from 'react';
-import {Text, View} from 'react-native';
+import * as eva from '@eva-design/eva';
+import AppNavigator from './src/navigation/AppNavigator';
+import {store} from './src/Store';
+import {Provider as StoreProvider} from 'react-redux';
+import {NavigationContainer} from '@react-navigation/native';
+import {ApplicationProvider} from '@ui-kitten/components';
 
-const App = () => {
+export default function App() {
   return (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <Text>App</Text>
-    </View>
+    <StoreProvider store={store}>
+      <NavigationContainer>
+        <ApplicationProvider {...eva} theme={eva['light']}>
+          <AppNavigator />
+        </ApplicationProvider>
+      </NavigationContainer>
+    </StoreProvider>
   );
-};
-
-export default App;
+}
