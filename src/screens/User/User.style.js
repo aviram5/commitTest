@@ -14,6 +14,7 @@ export default StyleSheet.create({
     flexDirection: 'row-reverse',
     justifyContent: 'center',
     alignItems: 'center',
+    flexWrap: 'wrap',
   },
   textLable: {fontSize: 32},
   textData: {fontSize: 24},

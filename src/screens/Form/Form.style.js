@@ -14,4 +14,12 @@ export default StyleSheet.create({
     width: '90%',
     alignSelf: 'center',
   },
+  massageContainer: {
+    flex: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  message: {
+    fontSize: 24,
+  },
 });
