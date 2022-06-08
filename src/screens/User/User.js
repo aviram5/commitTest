@@ -1,32 +1,41 @@
 import React from 'react';
-import {View, Text} from 'react-native';
+import {Layout, Text} from '@ui-kitten/components';
 import {useSelector} from 'react-redux';
+import styles from './User.style';
+
+const NoData = () => (
+  <Layout>
+    <Text style={styles.noDataText}>
+      No user information as been submitted, please go to form page and submit
+      your information
+    </Text>
+  </Layout>
+);
+
+const DataText = ({label, data}) => (
+  <Layout style={styles.textContainer}>
+    <Text style={styles.textLable}>{label}</Text>
+    <Text style={styles.textData}>{data}</Text>
+  </Layout>
+);
 
 const User = () => {
   const formState = useSelector(state => state.form);
 
-  const NoData = () => {
-    return (
-      <View>
-        <Text>
-          No user information as been submitted, please go to form page and
-          submit your information
-        </Text>
-      </View>
-    );
-  };
-
   return (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+    <Layout style={styles.container}>
       {!Object.keys(formState.formData).length ? (
         <NoData />
       ) : (
-        <View>
-          <Text>User Name: {formState.formData.userName}</Text>
-          <Text>PhoneNumber: {formState.formData.phoneNumber}</Text>
-        </View>
+        <Layout style={{justifyContent: 'center', alignItems: 'center'}}>
+          <DataText label="User Name: " data={formState.formData.userName} />
+          <DataText
+            label="Phone Number: "
+            data={formState.formData.phoneNumber}
+          />
+        </Layout>
       )}
-    </View>
+    </Layout>
   );
 };
 
