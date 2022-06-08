@@ -1,19 +1,31 @@
-import React from 'react';
+import React, {useEffect} from 'react';
+import {ActivityIndicator} from 'react-native';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {Layout, Input, Button, Text} from '@ui-kitten/components';
 import {Formik} from 'formik';
 import styles from './Form.style';
 import formSchema from './formScheme';
-import {fetchData} from '../../features/form/formSlice';
-import {useDispatch} from 'react-redux';
+import {fetchData, resetMessage} from '../../features/form/formSlice';
+import {useDispatch, useSelector} from 'react-redux';
+import {useIsFocused} from '@react-navigation/native';
+
 const Form = () => {
+  const isFocused = useIsFocused();
+  const formState = useSelector(state => state.form);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (!isFocused) {
+      dispatch(resetMessage());
+    }
+  }, [isFocused, dispatch]);
 
   const handleSubmit = formData => {
     dispatch(fetchData({formData}));
   };
 
   return (
-    <Layout>
+    <Layout style={{flex: 1}}>
       <Formik
         initialValues={{
           userName: '',
@@ -24,7 +36,9 @@ const Form = () => {
         validationSchema={formSchema}
         onSubmit={values => handleSubmit(values)}>
         {({handleChange, handleSubmit, values, touched, errors}) => (
-          <Layout style={{flex: 1}}>
+          <KeyboardAwareScrollView
+            resetScrollToCoords={{x: 0, y: 0}}
+            style={{marginTop: 40}}>
             <Layout style={styles.inputContainer}>
               <Input
                 style={styles.input}
@@ -38,13 +52,17 @@ const Form = () => {
             </Layout>
             <Layout style={styles.inputContainer}>
               <Input
+                keyboardType="phone-pad"
                 style={styles.input}
                 label={() => <Text>Phone Number</Text>}
                 placeholder="XX-XXX-XX"
                 value={values.phoneNumber}
                 onChangeText={handleChange('phoneNumber')}
                 caption={touched.phoneNumber && errors.phoneNumber}
-                status={(errors.phoneNumber && 'danger') || 'basic'}
+                status={
+                  (touched.phoneNumber && errors.phoneNumber && 'danger') ||
+                  'basic'
+                }
               />
             </Layout>
             <Layout style={styles.inputContainer}>
@@ -55,7 +73,9 @@ const Form = () => {
                 value={values.password}
                 onChangeText={handleChange('password')}
                 caption={touched.password && errors.password}
-                status={(errors.password && 'danger') || 'basic'}
+                status={
+                  (touched.password && errors.password && 'danger') || 'basic'
+                }
               />
             </Layout>
             <Layout style={styles.inputContainer}>
@@ -66,7 +86,12 @@ const Form = () => {
                 value={values.confirmPassword}
                 onChangeText={handleChange('confirmPassword')}
                 caption={touched.confirmPassword && errors.confirmPassword}
-                status={(errors.confirmPassword && 'danger') || 'basic'}
+                status={
+                  (touched.confirmPassword &&
+                    errors.confirmPassword &&
+                    'danger') ||
+                  'basic'
+                }
               />
             </Layout>
 
@@ -74,14 +99,22 @@ const Form = () => {
               style={styles.button}
               appearance="outline"
               onPress={handleSubmit}
-              // disabled={isSubmitting}
-            >
-              Save
+              disabled={formState.isLoading}>
+              {formState.isLoading ? <ActivityIndicator /> : 'Save'}
             </Button>
-          </Layout>
+          </KeyboardAwareScrollView>
         )}
       </Formik>
-      {/*if error render here a message */}
+
+      <Layout style={styles.massageContainer}>
+        {!formState.isLoading ? (
+          formState.error ? (
+            <Text style={styles.message}>{formState.error}</Text>
+          ) : (
+            <Text style={styles.message}>{formState.succsess}</Text>
+          )
+        ) : null}
+      </Layout>
     </Layout>
   );
 };
